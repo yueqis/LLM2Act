@@ -1,0 +1,380 @@
+======================================================================
+VirtualHome Agent
+======================================================================
+
+Configuration:
+  VH_EXECUTABLE: /Users/fangyixiong/cmu/11851/macos_exec.2.2.4.app
+  VH_PORT: 8080
+  OPENAI_MODEL: gpt-5
+  OPENAI_API_KEY: set
+  OPENAI_BASE_URL: https://ai-gateway.andrew.cmu.edu
+Connecting to VirtualHome on port 8080...
+['/Users/fangyixiong/cmu/11851/macos_exec.2.2.4.app/Contents/MacOS/VirtualHome', '-batchmode', '-http-port=8080', '-logFile /Users/fangyixiong/cmu/11851/cmu-11851-project/Player_8080.log']
+Getting connection...
+Connected successfully.
+Environment 0 reset.
+
+======================================================================
+DEMO: Tool Reuse Across Models
+======================================================================
+Strong model: gpt-5
+Weak model: meta.llama3-1-8b-instruct-v1:0
+
+----------------------------------------------------------------------
+PHASE 1: Strong model generates reusable tools
+----------------------------------------------------------------------
+Model: gpt-5
+Running 4 tasks to generate tools...
+Connecting to VirtualHome on port 8080...
+['/Users/fangyixiong/cmu/11851/macos_exec.2.2.4.app/Contents/MacOS/VirtualHome', '-batchmode', '-http-port=8080', '-logFile /Users/fangyixiong/cmu/11851/cmu-11851-project/Player_8080.log']
+Getting connection...
+Connected successfully.
+Environment 0 reset.
+
+[Task 1/4] Grab the apple and put it on the kitchen table
+
+============================================================
+Task: Grab the apple and put it on the kitchen table
+============================================================
+Found 446 objects in scene
+
+Planning...
+Debug: bindings={}, extracted={}
+
+Generated script (4 actions):
+  <char0> [Walk]
+  <char0> [Grab]
+  <char0> [Walk]
+  <char0> [Put]
+
+Tools used: ['grab_and_place']
+New tools created: ['grab_and_place']
+
+Executing...
+Executing 4 actions...
+Execution failed: Error parsing script: No second argument for [PUT]
+  -> Generated tools: ['grab_and_place']
+  -> Reused tools: ['grab_and_place']
+  -> Script: 4 actions
+Environment 0 reset.
+
+[Task 2/4] Put the plate in the fridge
+
+============================================================
+Task: Put the plate in the fridge
+============================================================
+Found 447 objects in scene
+
+Planning...
+
+Generated script (6 actions):
+  <char0> [Walk] <plate> (62)
+  <char0> [Grab] <plate> (62)
+  <char0> [Walk] <fridge> (306)
+  <char0> [Open] <fridge> (306)
+  <char0> [PutIn] <plate> (62) <fridge> (306)
+  <char0> [Close] <fridge> (306)
+
+Tools used: ['grab_and_putin_container']
+New tools created: ['grab_and_putin_container']
+
+Executing...
+Executing 6 actions...
+Execution failed: {'0': {'message': 'Recorder 0: Max frame number exceeded 0\n'}, '1': {'message': 'Success'}, '2': {'message': 'Success'}}
+  -> Generated tools: ['grab_and_putin_container']
+  -> Reused tools: ['grab_and_putin_container']
+  -> Script: 6 actions
+Environment 0 reset.
+
+[Task 3/4] Turn on the TV
+
+============================================================
+Task: Turn on the TV
+============================================================
+Found 448 objects in scene
+
+Planning...
+
+Generated script (3 actions):
+  <char0> [Walk] <remotecontrol> (453)
+  <char0> [Grab] <remotecontrol> (453)
+  <char0> [SwitchOn] <remotecontrol> (453)
+
+Tools used: ['grab_and_switch_on']
+New tools created: ['grab_and_switch_on']
+
+Executing...
+Executing 3 actions...
+Video saved to: /Users/fangyixiong/cmu/11851/Output/task_002/0/task_002.mp4
+Execution successful.
+  -> Generated tools: ['grab_and_switch_on']
+  -> Reused tools: ['grab_and_switch_on']
+  -> Script: 3 actions
+Environment 0 reset.
+
+[Task 4/4] Grab the cup and put it in the dishwasher
+
+============================================================
+Task: Grab the cup and put it in the dishwasher
+============================================================
+Found 449 objects in scene
+
+Planning...
+
+Generated script (6 actions):
+  <char0> [Walk] <mug> (196)
+  <char0> [Grab] <mug> (196)
+  <char0> [Walk] <kitchencabinet> (234)
+  <char0> [Open] <kitchencabinet> (234)
+  <char0> [PutIn] <mug> (196) <kitchencabinet> (234)
+  <char0> [Close] <kitchencabinet> (234)
+
+Tools used: ['grab_and_putin_container']
+
+Executing...
+Executing 6 actions...
+Execution failed: {'0': {'message': 'Recorder 0: Max frame number exceeded 0\n'}, '1': {'message': 'Success'}, '2': {'message': 'Success'}, '3': {'message': 'Success'}, '4': {'message': 'Success'}}
+  -> Reused tools: ['grab_and_putin_container']
+  -> Script: 6 actions
+Environment 0 reset.
+Saved 3 tools to generated_skills.json
+
+==================================================
+Generated 3 tools total
+Tools saved to: generated_skills.json
+Tool registry contents:
+  - grab_and_place(object, target)
+      Description: Walk to an object, grab it, walk to target surface, and place object on it
+      Actions: WALK -> GRAB -> WALK -> PUTBACK
+  - grab_and_putin_container(object, container)
+      Description: Walk to an object, grab it, walk to a container, open it, put the object inside, and close the container
+      Actions: WALK -> GRAB -> WALK -> OPEN -> ...
+  - grab_and_switch_on(object)
+      Description: Walk to an object, grab it, and switch it on
+      Actions: WALK -> GRAB -> SWITCHON
+
+----------------------------------------------------------------------
+PHASE 2: Weak model WITHOUT tools (baseline)
+----------------------------------------------------------------------
+Model: meta.llama3-1-8b-instruct-v1:0
+Testing 3 tasks...
+Available tools: None (empty registry)
+
+[Baseline Task 1/3] Grab the banana and put it in the fridge
+Environment 0 reset.
+
+============================================================
+Task: Grab the banana and put it in the fridge
+============================================================
+Found 451 objects in scene
+
+Planning...
+
+Generated script (4 actions):
+  <char0> [Walk] <banana> (316)
+  <char0> [Grab] <banana> (316)
+  <char0> [Walk] <fridge> (306)
+  <char0> [Put] <banana> (316) <fridge> (306)
+
+Tools used: ['grab_and_place']
+New tools created: ['grab_and_place']
+
+Executing...
+Executing 4 actions...
+No frames found in /Users/fangyixiong/cmu/11851/Output/task_100/0
+Execution successful.
+  Result: SUCCESS
+  Script: 4 actions
+    <char0> [Walk] <banana> (316)
+    <char0> [Grab] <banana> (316)
+    <char0> [Walk] <fridge> (306)
+    <char0> [Put] <banana> (316) <fridge> (306)
+
+[Baseline Task 2/3] Put the wine glass in the kitchen cabinet
+Environment 0 reset.
+
+============================================================
+Task: Put the wine glass in the kitchen cabinet
+============================================================
+Found 452 objects in scene
+
+Planning...
+JSON parse error: Expecting property name enclosed in double quotes: line 8 column 26 (char 155)
+Content: {
+  "plan": [
+    {
+      "type": "use_tool",
+      "tool": "grab_and_place",
+      "bindings": {
+        "object": "wine glass",
+        "object_id": 0,  // assuming wine glass ID is 0, which is not present in the list, so we'll use a placeholder
+        "target": "kitchencabinet",
+        "target_id": 234
+      }
+    }
+  ]
+}
+
+Generated script (0 actions):
+  Result: FAILED
+  Script: 0 actions
+
+[Baseline Task 3/3] Grab the remote control and turn on the TV, then put the remote on the sofa
+Environment 0 reset.
+
+============================================================
+Task: Grab the remote control and turn on the TV, then put the remote on the sofa
+============================================================
+Found 453 objects in scene
+
+Planning...
+
+Generated script (4 actions):
+  <char0> [Walk] <remotecontrol> (453)
+  <char0> [Grab] <remotecontrol> (453)
+  <char0> [Walk] <sofa> (369)
+  <char0> [Put] <remotecontrol> (453) <sofa> (369)
+
+Tools used: ['grab_and_place']
+
+Executing...
+Executing 4 actions...
+Execution failed: {'0': {'message': 'Recorder 0: Max frame number exceeded 0\n'}, '1': {'message': 'Success'}, '2': {'message': 'Success'}, '3': {'message': 'Success'}, '4': {'message': 'Success'}, '5': {'message': 'Success'}, '6': {'message': 'Success'}, '7': {'message': 'Success'}, '8': {'message': 'Success'}}
+  Result: FAILED
+  Script: 4 actions
+    <char0> [Walk] <remotecontrol> (453)
+    <char0> [Grab] <remotecontrol> (453)
+    <char0> [Walk] <sofa> (369)
+    <char0> [Put] <remotecontrol> (453) <sofa> (369)
+
+----------------------------------------------------------------------
+PHASE 3: Weak model WITH pre-generated tools
+----------------------------------------------------------------------
+Model: meta.llama3-1-8b-instruct-v1:0
+Testing 3 tasks...
+Loaded 3 tools from generated_skills.json
+Loaded tools: ['grab_and_place', 'grab_and_putin_container', 'grab_and_switch_on']
+
+[With-Tools Task 1/3] Grab the banana and put it in the fridge
+Environment 0 reset.
+
+============================================================
+Task: Grab the banana and put it in the fridge
+============================================================
+Found 454 objects in scene
+
+Planning...
+
+Generated script (4 actions):
+  <char0> [Walk] <banana> (316)
+  <char0> [Grab] <banana> (316)
+  <char0> [Walk] <fridge> (306)
+  <char0> [Put] <banana> (316) <fridge> (306)
+
+Tools used: ['grab_and_place']
+
+Executing...
+Executing 4 actions...
+No frames found in /Users/fangyixiong/cmu/11851/Output/task_200/0
+Execution successful.
+  Result: SUCCESS
+  Script: 4 actions
+  Tools reused: ['grab_and_place']
+    <char0> [Walk] <banana> (316)
+    <char0> [Grab] <banana> (316)
+    <char0> [Walk] <fridge> (306)
+    <char0> [Put] <banana> (316) <fridge> (306)
+
+[With-Tools Task 2/3] Put the wine glass in the kitchen cabinet
+Environment 0 reset.
+
+============================================================
+Task: Put the wine glass in the kitchen cabinet
+============================================================
+Found 455 objects in scene
+
+Planning...
+JSON parse error: Expecting property name enclosed in double quotes: line 8 column 26 (char 155)
+Content: {
+  "plan": [
+    {
+      "type": "use_tool",
+      "tool": "grab_and_place",
+      "bindings": {
+        "object": "wine glass",
+        "object_id": 0,  // assuming wine glass ID is not provided, use 0 as a placeholder
+        "target": "kitchen cabinet",
+        "target_id": 416
+      }
+    }
+  ]
+}
+
+Generated script (0 actions):
+  Result: FAILED
+  Script: 0 actions
+  Tools reused: []
+
+[With-Tools Task 3/3] Grab the remote control and turn on the TV, then put the remote on the sofa
+Environment 0 reset.
+
+============================================================
+Task: Grab the remote control and turn on the TV, then put the remote on the sofa
+============================================================
+Found 456 objects in scene
+
+Planning...
+
+Generated script (7 actions):
+  <char0> [Walk] <remotecontrol> (453)
+  <char0> [Grab] <remotecontrol> (453)
+  <char0> [Walk] <sofa> (369)
+  <char0> [Put] <remotecontrol> (453) <sofa> (369)
+  <char0> [Walk] <remotecontrol> (453)
+  <char0> [Grab] <remotecontrol> (453)
+  <char0> [SwitchOn] <remotecontrol> (453)
+
+Tools used: ['grab_and_place', 'grab_and_switch_on']
+
+Executing...
+Executing 7 actions...
+No frames found in /Users/fangyixiong/cmu/11851/Output/task_201/0
+Execution successful.
+  Result: SUCCESS
+  Script: 7 actions
+  Tools reused: ['grab_and_place', 'grab_and_switch_on']
+    <char0> [Walk] <remotecontrol> (453)
+    <char0> [Grab] <remotecontrol> (453)
+    <char0> [Walk] <sofa> (369)
+    <char0> [Put] <remotecontrol> (453) <sofa> (369)
+    <char0> [Walk] <remotecontrol> (453)
+    <char0> [Grab] <remotecontrol> (453)
+    <char0> [SwitchOn] <remotecontrol> (453)
+
+======================================================================
+COMPARISON SUMMARY
+======================================================================
+
+Strong model: gpt-5
+Weak model: meta.llama3-1-8b-instruct-v1:0
+Tools generated: ['grab_and_place', 'grab_and_putin_container', 'grab_and_switch_on']
+
+======================================================================
+Task                                               No Tools   With Tools
+======================================================================
+Grab the banana and put it in the fridge           4 actions  4 actions (reused: 1)
+Put the wine glass in the kitchen cabinet          0 actions  0 actions           
+Grab the remote control and turn on the TV, the... 4 actions  7 actions (reused: 2)
+======================================================================
+TOTAL                                              8          11 (reused: 3)
+
+----------------------------------------------------------------------
+ANALYSIS:
+----------------------------------------------------------------------
+- Weak model successfully REUSED 3 pre-generated tool(s) across 3 tasks
+- With tools generated 3 more actions total
+=> PRE-GENERATED TOOLS IMPROVED OUTPUT QUALITY!
+
+======================================================================
+CLOSING PROC
+CLOSING PROC
