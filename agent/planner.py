@@ -87,9 +87,12 @@ class Planner:
             return False
 
         print(f"Connecting to VirtualHome on port {self.port}...")
+        # Get display from environment variable, default to "99" for headless
+        x_display = os.getenv("DISPLAY", ":99").replace(":", "")
         self.comm = comm_unity.UnityCommunication(
             file_name=self.executable_path,
             port=self.port,
+            x_display=x_display,
             timeout_wait=300  # 5 minutes timeout for video recording
         )
         print("Connected successfully.")
